@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Werewolf Gaming.co Half-Life 2 City Roleplay</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <style>
+            * {
+                margin: 0; padding: 0; box-sizing: border-box;
+            }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+                background-color: black;
+                color: rgb(252, 252, 252);
+                font-family: Roboto;
+                overflow: hidden;
+            }
+
+            .slideshow img {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0;
+                transition: opacity 2s ease-in-out;
+                z-index: 0;
+            }
+
+            .slideshow img.active {
+                opacity: 1;
+            }
+
+            .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0);
+            }
+
+            .centered {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                z-index: 1;
+            }
+
+            h1 {
+                font-size: 2em;
+                margin-top: 4%;
+                margin-bottom: 0.5em;
+                font-size: 400%;
+            }
+
+            p {
+                margin: 0.3em 0;
+            }
+
+            .progress-container {
+                width: 60%;
+                height: 4%;
+                background-color: rgb(51, 51, 51);
+                opacity: 0.8;
+                margin: 34% auto;
+                border-radius: 6px;
+                overflow: hidden;
+            }
+
+            .progress-bar {
+                height: 100%;
+                width: 0%;
+                background: linear-gradient(90deg, #696969, #fcfcfc);
+                transition: width 0.5s ease;
+            }
+
+            .status-text {
+                margin-top: 10px;
+                font-size: 0.9em;
+                color: #aaa;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="slideshow">
+            <img src="https://i.imgur.com/kqgOXjV.jpeg" class="active">
+            <img src="https://i.imgur.com/6onR3Nf.jpeg">
+            <img src="https://i.imgur.com/0gszEyt.jpeg">
+            <img src="https://i.imgur.com/C9GJo8w.jpeg">
+            <img src="https://i.imgur.com/qqgcC9A.jpeg">
+        </div>
+
+        <div class="overlay"></div>
+
+        <div class="centered">
+            <h1>Werewolf Gaming.co Half-Life 2 City Roleplay</h1>
+            <p>Map: <span id="map-name">-</span></p>
+            <p class="status-text" id="status">Retrieving server info...</p>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <script>
+            const slides = document.querySelectorAll('.slideshow img');
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 5000);
+
+            function progress(percent) {
+                document.getElementById("progress-bar").style.width = percent + "%"
+            }
+
+            function GameDetails(_, _, mapname, _, _, _, _, _) {
+                document.getElementById("map-name").textContent = mapname;
+                progress(1);
+            }
+
+            let workshopLoaded = 0;
+            const totalWorkshop = 41;
+            let luaLoaded = 0;
+            const totalLua = 2400;
+
+            function SetStatusChanged(status) {
+                document.getElementById("status").textContent = status;
+
+                if (status == "Mounting Addons") {
+                    progress(74);
+                } else if (status == "Workshop Complete") {
+                    progress(75.6);
+                } else if (status == "Sending client info...") {
+                    progress(77.3);
+                } else if (status == "Client info sent!") {
+                    progress(79);
+                } else if (status == "Received all Lua files we needed!") {
+                    progress(94);
+                } else if (status == "Starting Lua...") {
+                    progress(95);
+                } else if (status == "Lua Started!") {
+                    progress(97.5);
+                } else if (status == "Fully Connected!") {
+                    progress(100);
+                } else if (status.includes(" - Loading")) {
+                    workshopLoaded++;
+                    const start = 1;
+                    const end = 74;
+                    const addonProgress = start + ((end - start) * (workshopLoaded / totalWorkshop));
+                    progress(addonProgress);
+                } else if (status.endsWith(" Lua files")) {
+                    luaLoaded++;
+                    const start = 79;
+                    const end = 94;
+                    const luaProgress = start + ((end - start) * (luaLoaded / totalLua));
+                    progress(luaProgress);
+                }
+            }
+        </script>
+    </body>
+</html>
